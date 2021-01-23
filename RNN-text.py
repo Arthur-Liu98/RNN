@@ -1,3 +1,40 @@
+from sklearn import datasets
+from sklearn import svm, metrics
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+# The digits dataset
+digits = datasets.load_digits()
+
+images_and_labels = list(zip(digits.images,digits.target))
+for index, (image,label) in enumerate(images_and_labels[:4]):
+    plt.subplot(2,4, index + 1)
+    plt.axis("off")
+    plt.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
+    plt.title("Training: %i" % label)
+
+n_samples = len(digits.images)
+data = digits.images.reshape((n_samples,-1))
+
+# Create a classifier
+classifier = svm.SVC(gamma=0.001)
+# Use the first half of the data to train
+classifier.fit(data[:n_samples // 2], digits.target[:n_samples // 2 ])
+# Use the second half of the data to test
+expected = digits.target[n_samples // 2 :]
+predicted = classifier.predict(data[n_samples // 2 :])
+
+print ("Classification report for classifier %s:\n%s\n"
+      % (classifier, metrics.classification_report(expected,predicted)))
+print ("Confusion matrix: \n%s" % metrics.confusion_matrix(expected,predicted))
+
+images_and_predictions = list(zip(digits.images[n_samples //2 :],predicted))
+for index, (image,prediction) in enumerate(images_and_predictions[:4]):
+    plt.subplot(2,4,index + 5)
+    plt.axis("off")
+    plt.imshow(image,cmap=plt.cm.gray_r, interpolation = "nearest")
+    plt.title("Prediction: %i" % prediction)
+    
 #!/usr/bin/env python
 # coding: utf-8
 
